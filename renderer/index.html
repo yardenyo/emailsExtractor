@@ -18,6 +18,56 @@
     <title>LinkedIn Email Sender</title>
   </head>
   <body>
-    <h1>Hello World !</h1>
+    <h1>LinkedIn Email Sender</h1>
+    <form id="email-form">
+      <label for="linkedin-email">LinkedIn Email:</label>
+      <input
+        type="email"
+        id="linkedin-email"
+        name="linkedin-email"
+        required
+      /><br />
+
+      <label for="linkedin-password">LinkedIn Password:</label>
+      <input
+        type="password"
+        id="linkedin-password"
+        name="linkedin-password"
+        required
+      /><br />
+
+      <label for="gmail-email">Gmail Email:</label>
+      <input type="email" id="gmail-email" name="gmail-email" required /><br />
+
+      <label for="gmail-password">Gmail Password:</label>
+      <input
+        type="password"
+        id="gmail-password"
+        name="gmail-password"
+        required
+      /><br />
+
+      <label for="cv-upload">Upload CV:</label>
+      <input
+        type="file"
+        id="cv-upload"
+        name="cv-upload"
+        accept=".pdf,.doc,.docx"
+      /><br />
+
+      <button type="submit">Send Emails</button>
+    </form>
+
+    <table id="success-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Date Sent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr></tr>
+      </tbody>
+    </table>
   </body>
 </html>
