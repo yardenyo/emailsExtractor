@@ -19,6 +19,8 @@ form {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 label {
@@ -29,12 +31,19 @@ label {
 
 input[type="email"],
 input[type="password"],
+input[type="number"],
 input[type="file"] {
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+small {
+  display: block;
+  margin-top: 5px;
+  color: #999;
 }
 
 button {

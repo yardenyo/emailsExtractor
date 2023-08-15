@@ -7,7 +7,7 @@ const sendEmails = require("./sendEmails");
 
 const feedUrl = "https://www.linkedin.com/feed/";
 
-(async () => {
+async function runLinkedInEmailSender(formData) {
   const browser = await puppeteer.launch({
     args: ["--start-maximized"],
     headless: false,
@@ -16,10 +16,17 @@ const feedUrl = "https://www.linkedin.com/feed/";
   const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
 
-  await login(page);
+  const linkedinEmail = formData.linkedinEmail;
+  const linkedinPassword = formData.linkedinPassword;
+  const gmailEmail = formData.gmailEmail;
+  const gmailPassword = formData.gmailPassword;
+  const cvFile = formData.cvFile;
+  const scrolls = formData.scrolls;
+
+  await login(page, linkedinEmail, linkedinPassword);
 
   await page.goto(feedUrl);
-  await scrollPage(page, 50);
+  await scrollPage(page, scrolls);
 
   const posts = await page.$$("div.feed-shared-update-v2");
 
@@ -36,4 +43,6 @@ const feedUrl = "https://www.linkedin.com/feed/";
     await sendEmails(emailsToSend);
   }
   await browser.close();
-})();
+}
+
+module.exports = runLinkedInEmailSender;

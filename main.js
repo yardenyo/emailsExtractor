@@ -1,26 +1,21 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const runLinkedInEmailSender = require("./index.js");
 
-const isDev = process.env.NODE_ENV !== "production";
 const isMac = process.platform === "darwin";
 
 function createMainWindow() {
   const mainWindow = new BrowserWindow({
     title: "LinkedIn Email Sender",
-    width: isDev ? 900 : 900,
-    height: isDev ? 700 : 700,
+    width: 900,
+    height: 700,
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
-  // Open devtools if in dev env
-  if (isDev) {
-    mainWindow.webContents.openDevTools();
-  }
 
   mainWindow.loadFile(path.join(__dirname, "./renderer/index.html"));
 }
@@ -57,6 +52,10 @@ app.whenReady().then(() => {
     return blackListData;
   });
 
+  ipcMain.handle("start", (event, formData) => {
+    runLinkedInEmailSender(formData);
+  });
+
   // Implement menu
   const mainMenu = Menu.buildFromTemplate(menu);
   Menu.setApplicationMenu(mainMenu);
@@ -70,35 +69,16 @@ app.whenReady().then(() => {
 
 // Menu template
 const menu = [
-  ...(isMac
-    ? [
-        {
-          label: app.name,
-          submenu: [
-            {
-              label: "About",
-              click: createAboutWindow,
-            },
-          ],
-        },
-      ]
-    : []),
   {
-    role: "fileMenu",
+    label: "File",
+    submenu: [
+      {
+        label: "Quit",
+        accelerator: "CmdOrCtrl+W",
+        click: () => app.quit(),
+      },
+    ],
   },
-  ...(!isMac
-    ? [
-        {
-          label: "Help",
-          submenu: [
-            {
-              label: "About",
-              click: createAboutWindow,
-            },
-          ],
-        },
-      ]
-    : []),
 ];
 
 app.on("window-all-closed", () => {

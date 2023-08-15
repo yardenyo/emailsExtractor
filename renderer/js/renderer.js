@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const dateCell = newRow.insertCell(1);
 
         emailCell.textContent = entry.email;
-        dateCell.textContent = new Date(entry.dateSent).toLocaleString();
+        dateCell.textContent = new Date(entry.date).toLocaleString();
       });
     } catch (error) {
       console.error(
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gmailEmail = document.getElementById("gmail-email").value;
     const gmailPassword = document.getElementById("gmail-password").value;
     const cvFile = document.getElementById("cv-upload").files[0];
+    const scrolls = document.getElementById("scroll-count").value;
 
     const payload = {
       linkedinEmail,
@@ -43,8 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
       gmailEmail,
       gmailPassword,
       cvFile,
+      scrolls,
     };
 
-    console.log(payload);
+    try {
+      await window.electron.ipcRenderer.invoke("start", payload);
+      populateTableFromMainProcess();
+    } catch (error) {
+      console.error("An error occurred while starting the app:", error);
+    }
   });
 });
