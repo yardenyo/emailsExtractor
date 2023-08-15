@@ -2,12 +2,12 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-async function sendEmails(emails) {
+async function sendEmails(emails, gmailEmail, gmailPassword, cvFile) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.GMAIL_EMAIL,
-      pass: process.env.GMAIL_PASSWORD,
+      user: gmailEmail,
+      pass: gmailPassword,
     },
   });
 

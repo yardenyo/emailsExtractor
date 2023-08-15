@@ -85,3 +85,23 @@ tr:nth-child(even) {
 tr:hover {
   background-color: #e0e0e0;
 }
+
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.options > .buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#save-credentials {
+  display: flex;
+  align-items: center;
+  cursor: pointer !important;
+  pointer-events: all !important;
+}

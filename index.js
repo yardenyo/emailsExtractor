@@ -40,8 +40,9 @@ async function runLinkedInEmailSender(formData) {
   }
 
   if (emailsToSend.length > 0) {
-    await sendEmails(emailsToSend);
+    await sendEmails(emailsToSend, gmailEmail, gmailPassword, cvFile);
   }
+
   await browser.close();
 }
 

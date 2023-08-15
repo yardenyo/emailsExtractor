@@ -4,6 +4,7 @@ const fs = require("fs");
 const runLinkedInEmailSender = require("./index.js");
 
 const isMac = process.platform === "darwin";
+const isDev = process.env.NODE_ENV !== "production";
 
 function createMainWindow() {
   const mainWindow = new BrowserWindow({
@@ -16,6 +17,10 @@ function createMainWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.loadFile(path.join(__dirname, "./renderer/index.html"));
 }
@@ -44,9 +49,23 @@ function readBlackListData() {
   }
 }
 
+function getEnvFileContent() {
+  const envPath = path.join(__dirname, ".env");
+  try {
+    const envData = fs.readFileSync(envPath, "utf-8");
+    return envData;
+  } catch (error) {
+    console.error("An error occurred while reading the env file:", error);
+  }
+}
+
 app.whenReady().then(() => {
   readBlackListData();
   createMainWindow();
+
+  ipcMain.handle("getEnvFileContent", (event) => {
+    return getEnvFileContent();
+  });
 
   ipcMain.handle("getBlacklistData", (event) => {
     return blackListData;
@@ -54,6 +73,16 @@ app.whenReady().then(() => {
 
   ipcMain.handle("start", (event, formData) => {
     runLinkedInEmailSender(formData);
+  });
+
+  ipcMain.handle("writeToEnvFile", async (event, content) => {
+    try {
+      await fs.promises.writeFile("./.env", content);
+      return true;
+    } catch (error) {
+      console.error("An error occurred while writing to the env file:", error);
+      return false;
+    }
   });
 
   // Implement menu
