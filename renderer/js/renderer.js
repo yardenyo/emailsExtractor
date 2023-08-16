@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const successTable = document
     .getElementById("success-table")
     .getElementsByTagName("tbody")[0];
+  const submitButton = document.getElementById("submit-button");
+  const stopButton = document.getElementById("stop-button");
+  let processIsRunning = false;
 
   async function populateFormFromEnvFile() {
     try {
@@ -38,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function populateTableFromMainProcess() {
+  async function populateTable() {
     try {
       const result = await window.electron.ipcRenderer.invoke(
         "getBlacklistData"
@@ -57,12 +60,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  submitButton.disabled = false;
+  stopButton.disabled = true;
+
   populateFormFromEnvFile();
 
-  populateTableFromMainProcess();
+  populateTable();
 
   emailForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (processIsRunning) {
+      return;
+    }
 
     const saveCredentials = document.getElementById("save-credentials");
 
@@ -103,10 +113,27 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
+      processIsRunning = true;
+      submitButton.disabled = true;
+      stopButton.disabled = false;
       await window.electron.ipcRenderer.invoke("start", payload);
-      populateTableFromMainProcess();
     } catch (error) {
       throw error;
+    }
+  });
+
+  stopButton.addEventListener("click", async () => {
+    if (!processIsRunning) {
+      return;
+    }
+    try {
+      await window.electron.ipcRenderer.invoke("stop");
+    } catch (error) {
+      throw error;
+    } finally {
+      processIsRunning = false;
+      submitButton.disabled = false;
+      stopButton.disabled = true;
     }
   });
 });

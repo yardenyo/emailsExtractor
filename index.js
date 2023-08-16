@@ -7,8 +7,10 @@ const sendEmails = require("./sendEmails");
 
 const feedUrl = "https://www.linkedin.com/feed/";
 
+let browser;
+
 async function runLinkedInEmailSender(formData) {
-  const browser = await puppeteer.launch({
+  browser = await puppeteer.launch({
     args: ["--start-maximized"],
     headless: false,
   });
@@ -46,4 +48,10 @@ async function runLinkedInEmailSender(formData) {
   await browser.close();
 }
 
-module.exports = runLinkedInEmailSender;
+async function stopExecution() {
+  if (browser) {
+    await browser.close();
+  }
+}
+
+module.exports = { runLinkedInEmailSender, stopExecution };

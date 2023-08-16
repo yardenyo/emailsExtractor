@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
-const runLinkedInEmailSender = require("./index.js");
+const { runLinkedInEmailSender, stopExecution } = require("./index.js");
 
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "production";
@@ -83,6 +83,10 @@ app.whenReady().then(() => {
       console.error("An error occurred while writing to the env file:", error);
       return false;
     }
+  });
+
+  ipcMain.handle("stop", async (event) => {
+    stopExecution();
   });
 
   // Implement menu
