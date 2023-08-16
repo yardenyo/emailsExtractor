@@ -6,8 +6,10 @@ const { runLinkedInEmailSender, stopExecution } = require("./index.js");
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "production";
 
+let mainWindow;
+
 function createMainWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: "LinkedIn Email Sender",
     width: 900,
     height: 700,
@@ -25,19 +27,8 @@ function createMainWindow() {
   mainWindow.loadFile(path.join(__dirname, "./renderer/index.html"));
 }
 
-// Create about window
-function createAboutWindow() {
-  const aboutWindow = new BrowserWindow({
-    title: "About LinkedIn Email Sender",
-    width: 300,
-    height: 300,
-    resizable: false,
-  });
-
-  aboutWindow.loadFile(path.join(__dirname, "./renderer/about.html"));
-}
-
 let blackListData = [];
+let emails = [];
 
 function readBlackListData() {
   const jsonPath = path.join(__dirname, "blacklist.json");
@@ -71,8 +62,17 @@ app.whenReady().then(() => {
     return blackListData;
   });
 
-  ipcMain.handle("start", (event, formData) => {
-    runLinkedInEmailSender(formData);
+  ipcMain.handle("start", async (event, formData) => {
+    try {
+      const emailsToSend = await runLinkedInEmailSender(formData);
+      console.log("Emails to send:", emailsToSend);
+
+      mainWindow.webContents.send("emailsToSend", emailsToSend);
+
+      stopExecution();
+    } catch (error) {
+      console.error("Error during email sending:", error);
+    }
   });
 
   ipcMain.handle("writeToEnvFile", async (event, content) => {

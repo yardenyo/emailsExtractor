@@ -23,6 +23,7 @@ async function sendEmails(emails, gmailEmail, gmailPassword, cvFile) {
   }
 
   const now = new Date();
+  const successEmails = [];
 
   for (const email of emails) {
     const blacklistEntry = blacklist.find((entry) => entry.email === email);
@@ -68,17 +69,19 @@ async function sendEmails(emails, gmailEmail, gmailPassword, cvFile) {
           blacklist.push({ email, date: now.toISOString() });
         }
         fs.writeFileSync("blacklist.json", JSON.stringify(blacklist), "utf8");
+
+        successEmails.push(email);
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error);
       }
-    } else {
-      console.log(`Skipping ${email} because it's in the blacklist`);
     }
   }
+
+  return successEmails;
 }
 
 function hasBeenAMonth(startDate, endDate) {
-  const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // 30 days per month
+  const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000;
   const timeDiff = endDate - new Date(startDate);
   return timeDiff >= oneMonthInMillis;
 }

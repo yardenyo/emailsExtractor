@@ -33,6 +33,7 @@ async function runLinkedInEmailSender(formData) {
   const posts = await page.$$("div.feed-shared-update-v2");
 
   let emailsToSend = [];
+  let successEmails = [];
 
   for (const post of posts) {
     const emails = await extractEmailsFromPost(post, page);
@@ -42,15 +43,24 @@ async function runLinkedInEmailSender(formData) {
   }
 
   if (emailsToSend.length > 0) {
-    await sendEmails(emailsToSend, gmailEmail, gmailPassword, cvFile);
+    successEmails = await sendEmails(
+      emailsToSend,
+      gmailEmail,
+      gmailPassword,
+      cvFile
+    );
   }
 
   await browser.close();
+
+  return successEmails;
 }
 
 async function stopExecution() {
   if (browser) {
-    await browser.close();
+    await browser.close().then(() => {
+      process.exit();
+    });
   }
 }
 

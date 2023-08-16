@@ -5,7 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementsByTagName("tbody")[0];
   const submitButton = document.getElementById("submit-button");
   const stopButton = document.getElementById("stop-button");
+  const prevPageButton = document.getElementById("prev-page");
+  const nextPageButton = document.getElementById("next-page");
   let processIsRunning = false;
+  let currentPage = 1;
+  const itemsPerPage = 10;
 
   async function populateFormFromEnvFile() {
     try {
@@ -41,20 +45,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function populateTable() {
+  async function populateTable(page) {
     try {
       const result = await window.electron.ipcRenderer.invoke(
         "getBlacklistData"
       );
 
-      result.forEach((entry) => {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+
+      successTable.innerHTML = "";
+
+      for (let i = startIndex; i < endIndex && i < result.length; i++) {
+        const entry = result[i];
         const newRow = successTable.insertRow();
         const emailCell = newRow.insertCell(0);
         const dateCell = newRow.insertCell(1);
 
         emailCell.textContent = entry.email;
         dateCell.textContent = new Date(entry.date).toLocaleString();
-      });
+      }
+
+      prevPageButton.disabled = page === 1;
+      nextPageButton.disabled = endIndex >= result.length;
     } catch (error) {
       throw error;
     }
@@ -65,7 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   populateFormFromEnvFile();
 
-  populateTable();
+  populateTable(currentPage);
+
+  window.electron.ipcRenderer.on("emailsToSend", (event, emailsToSend) => {
+    emailsToSend.forEach((email) => {
+      const newRow = successTable.insertRow();
+      const emailCell = newRow.insertCell(0);
+      const dateCell = newRow.insertCell(1);
+
+      emailCell.textContent = email;
+      dateCell.textContent = new Date().toLocaleString();
+    });
+  });
 
   emailForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -135,5 +159,17 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.disabled = false;
       stopButton.disabled = true;
     }
+  });
+
+  prevPageButton.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      populateTable(currentPage);
+    }
+  });
+
+  nextPageButton.addEventListener("click", () => {
+    currentPage++;
+    populateTable(currentPage);
   });
 });
