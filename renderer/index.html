@@ -56,7 +56,9 @@
       /><br />
 
       <label for="scroll-count">Number of Scrolls:</label>
-      <small>Note: More scrolls will take more time.</small>
+      <small class="small-scrolls"
+        >Note: More scrolls will take more time.</small
+      >
       <input
         type="number"
         id="scroll-count"
@@ -97,6 +99,18 @@
     <div class="pagination">
       <button id="prev-page" class="pagination-button">Previous Page</button>
       <button id="next-page" class="pagination-button">Next Page</button>
+    </div>
+
+    <div id="confirmation-modal" class="modal">
+      <div class="modal-content">
+        <h2>Confirmation</h2>
+        <p>Stopping the process will delete all the emails found.</p>
+        <p>Are you sure you want to stop the process?</p>
+        <div class="modal-buttons">
+          <button id="confirm-stop">Yes</button>
+          <button id="cancel-stop">Cancel</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

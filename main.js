@@ -84,6 +84,24 @@ app.whenReady().then(() => {
     }
   });
 
+  ipcMain.handle("uploadCV", async (event, cvData) => {
+    const cvName = cvData.name;
+    const cvPath = cvData.path;
+    const attachmentsFolderPath = path.join(__dirname, "attachments");
+    const destinationPath = path.join(attachmentsFolderPath, cvName);
+
+    try {
+      await fs.promises.copyFile(cvPath, destinationPath);
+
+      return {
+        returnedCVName: cvName,
+        returnedCVPath: `./attachments/${cvName}`,
+      };
+    } catch (error) {
+      return { returnedCVName: "", returnedCVPath: "" };
+    }
+  });
+
   ipcMain.handle("stop", async (event) => {
     stopExecution();
   });

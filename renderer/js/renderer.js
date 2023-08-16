@@ -5,12 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementsByTagName("tbody")[0];
   const submitButton = document.getElementById("submit-button");
   const stopButton = document.getElementById("stop-button");
+  const confirmationModal = document.getElementById("confirmation-modal");
+  const confirmStopButton = document.getElementById("confirm-stop");
+  const cancelStopButton = document.getElementById("cancel-stop");
   const prevPageButton = document.getElementById("prev-page");
   const nextPageButton = document.getElementById("next-page");
+
   let processIsRunning = false;
   let currentPage = 1;
   const itemsPerPage = 10;
 
+  // Function to populate form fields from environment file
   async function populateFormFromEnvFile() {
     try {
       const result = await window.electron.ipcRenderer.invoke(
@@ -45,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Function to populate table data
   async function populateTable(page) {
     try {
       const result = await window.electron.ipcRenderer.invoke(
@@ -73,13 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Initial setup
   submitButton.disabled = false;
   stopButton.disabled = true;
-
   populateFormFromEnvFile();
-
   populateTable(currentPage);
 
+  // Event listener for emails to send
   window.electron.ipcRenderer.on("emailsToSend", (event, emailsToSend) => {
     emailsToSend.forEach((email) => {
       const newRow = successTable.insertRow();
@@ -91,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Event listener for form submission
   emailForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -99,13 +106,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const saveCredentials = document.getElementById("save-credentials");
-
     const linkedinEmail = document.getElementById("linkedin-email").value;
     const linkedinPassword = document.getElementById("linkedin-password").value;
     const gmailEmail = document.getElementById("gmail-email").value;
     const gmailPassword = document.getElementById("gmail-password").value;
     const cvFile = document.getElementById("cv-upload").files[0];
     const scrolls = document.getElementById("scroll-count").value;
+
+    let cvName = "";
+    let cvPath = "";
+
+    if (cvFile) {
+      const cvData = {
+        name: cvFile.name,
+        path: cvFile.path,
+      };
+
+      const { returnedCVName, returnedCVPath } =
+        await window.electron.ipcRenderer.invoke("uploadCV", cvData);
+
+      cvName = returnedCVName;
+      cvPath = returnedCVPath;
+    }
 
     if (saveCredentials.checked) {
       const envFileContent = `LINKEDIN_EMAIL=${linkedinEmail}\nLINKEDIN_PASSWORD=${linkedinPassword}\nGMAIL_EMAIL=${gmailEmail}\nGMAIL_PASSWORD=${gmailPassword}\nSCROLLS=${scrolls}`;
@@ -132,7 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
       linkedinPassword,
       gmailEmail,
       gmailPassword,
-      cvFile,
+      cvName,
+      cvPath,
       scrolls,
     };
 
@@ -146,21 +169,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  stopButton.addEventListener("click", async () => {
-    if (!processIsRunning) {
-      return;
-    }
+  // Event listener for stop button
+  stopButton.addEventListener("click", () => {
+    confirmationModal.style.display = "block";
+  });
+
+  // Event listener for confirming stop
+  confirmStopButton.addEventListener("click", async () => {
     try {
       await window.electron.ipcRenderer.invoke("stop");
     } catch (error) {
-      throw error;
+      console.error("Error stopping the process:", error);
     } finally {
       processIsRunning = false;
       submitButton.disabled = false;
       stopButton.disabled = true;
+      confirmationModal.style.display = "none";
     }
   });
 
+  // Event listener for canceling stop
+  cancelStopButton.addEventListener("click", () => {
+    confirmationModal.style.display = "none";
+  });
+
+  // Event listener for previous page
   prevPageButton.addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
@@ -168,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Event listener for next page
   nextPageButton.addEventListener("click", () => {
     currentPage++;
     populateTable(currentPage);
