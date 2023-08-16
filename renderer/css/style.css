@@ -116,6 +116,36 @@ tr:hover {
   cursor: not-allowed;
 }
 
+.pagination-info {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #777;
+}
+
+.pagination-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.page-index-button {
+  padding: 5px 10px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.page-index-button.current-page {
+  background-color: #007bff;
+  color: white;
+}
+
+.page-index-button:hover {
+  background-color: #ccc;
+}
+
 .options {
   display: flex;
   align-items: center;

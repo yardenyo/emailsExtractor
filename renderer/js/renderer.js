@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await window.electron.ipcRenderer.invoke(
         "getBlacklistData"
       );
+      const totalResults = result.length;
 
       const startIndex = (page - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
@@ -72,11 +73,40 @@ document.addEventListener("DOMContentLoaded", () => {
         dateCell.textContent = new Date(entry.date).toLocaleString();
       }
 
+      updatePaginationInfo(page, totalResults);
+
       prevPageButton.disabled = page === 1;
       nextPageButton.disabled = endIndex >= result.length;
+
+      const pageButtonsContainer = document.getElementById("page-buttons");
+      pageButtonsContainer.innerHTML = "";
+
+      for (let i = 1; i <= Math.ceil(totalResults / itemsPerPage); i++) {
+        const pageButton = document.createElement("button");
+        pageButton.textContent = i;
+        pageButton.className = "page-index-button";
+        if (i === page) {
+          pageButton.classList.add("current-page");
+        }
+        pageButton.addEventListener("click", () => {
+          currentPage = i;
+          populateTable(currentPage);
+        });
+        pageButtonsContainer.appendChild(pageButton);
+      }
     } catch (error) {
       throw error;
     }
+  }
+
+  function updatePaginationInfo(page, totalResults) {
+    const paginationInfo = document.getElementById("pagination-info");
+    paginationInfo.textContent = `Displaying ${
+      (page - 1) * itemsPerPage + 1
+    } - ${Math.min(
+      page * itemsPerPage,
+      totalResults
+    )} of ${totalResults} results`;
   }
 
   // Initial setup
