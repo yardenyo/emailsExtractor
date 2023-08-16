@@ -13,7 +13,6 @@ async function sendEmails(emails, gmailEmail, gmailPassword, cvFile) {
 
   const linkedinPost = process.env.LINKEDIN_POST;
 
-  // Load the blacklist from the JSON file
   let blacklist = [];
   try {
     const blacklistData = fs.readFileSync("blacklist.json", "utf8");

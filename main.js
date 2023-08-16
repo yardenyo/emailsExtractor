@@ -65,7 +65,6 @@ app.whenReady().then(() => {
   ipcMain.handle("start", async (event, formData) => {
     try {
       const emailsToSend = await runLinkedInEmailSender(formData);
-      console.log("Emails to send:", emailsToSend);
 
       mainWindow.webContents.send("emailsToSend", emailsToSend);
 
@@ -89,7 +88,6 @@ app.whenReady().then(() => {
     stopExecution();
   });
 
-  // Implement menu
   const mainMenu = Menu.buildFromTemplate(menu);
   Menu.setApplicationMenu(mainMenu);
 
@@ -100,7 +98,6 @@ app.whenReady().then(() => {
   });
 });
 
-// Menu template
 const menu = [
   {
     label: "File",
