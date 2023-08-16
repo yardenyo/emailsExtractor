@@ -52,8 +52,8 @@ async function sendEmails(emails, gmailEmail, gmailPassword, cvName, cvPath) {
   //   `,
   //       attachments: [
   //         {
-  //           filename: "CV Yarden Yosef.pdf",
-  //           path: "./attachments/CV Yarden Yosef.pdf",
+  //           filename: cvName,
+  //           path: cvPath,
   //         },
   //       ],
   //     };
