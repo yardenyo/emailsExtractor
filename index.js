@@ -25,6 +25,8 @@ async function runLinkedInEmailSender(formData) {
   const cvName = formData.cvName;
   const cvPath = formData.cvPath;
   const scrolls = formData.scrolls;
+  const subject = formData.subject;
+  const body = formData.body;
 
   await login(page, linkedinEmail, linkedinPassword);
 
@@ -49,7 +51,9 @@ async function runLinkedInEmailSender(formData) {
       gmailEmail,
       gmailPassword,
       cvName,
-      cvPath
+      cvPath,
+      subject,
+      body
     );
   }
 

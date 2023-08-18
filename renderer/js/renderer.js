@@ -50,6 +50,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Function to populate email content from file
+  async function populateEmailContent() {
+    try {
+      const result = await window.electron.ipcRenderer.invoke(
+        "getEmailFileContent"
+      );
+
+      if (result.length > 0) {
+        const emailContent = JSON.parse(result);
+
+        const subject = emailContent[0].subject;
+        const body = emailContent[0].body;
+
+        document.getElementById("email-subject").value = subject;
+        document.getElementById("email-body").value = body;
+      } else {
+        document.getElementById("email-subject").value = "";
+        document.getElementById("email-body").value = "";
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Function to populate table data
   async function populateTable(page) {
     try {
@@ -113,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   submitButton.disabled = false;
   stopButton.disabled = true;
   populateFormFromEnvFile();
+  populateEmailContent();
   populateTable(currentPage);
 
   // Event listener for emails to send
@@ -142,6 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const gmailPassword = document.getElementById("gmail-password").value;
     const cvFile = document.getElementById("cv-upload").files[0];
     const scrolls = document.getElementById("scroll-count").value;
+    const subject = document.getElementById("email-subject").value;
+    const body = document.getElementById("email-body").value;
 
     let cvName = "";
     let cvPath = "";
@@ -162,10 +189,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (saveCredentials.checked) {
       const envFileContent = `LINKEDIN_EMAIL=${linkedinEmail}\nLINKEDIN_PASSWORD=${linkedinPassword}\nGMAIL_EMAIL=${gmailEmail}\nGMAIL_PASSWORD=${gmailPassword}\nSCROLLS=${scrolls}`;
 
+      const emailFileContent = [{ subject, body }];
+
       try {
         await window.electron.ipcRenderer.invoke(
           "writeToEnvFile",
           envFileContent
+        );
+        await window.electron.ipcRenderer.invoke(
+          "writeToEmailContentFile",
+          emailFileContent
         );
       } catch (error) {
         throw error;
@@ -187,6 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
       cvName,
       cvPath,
       scrolls,
+      subject,
+      body,
     };
 
     try {

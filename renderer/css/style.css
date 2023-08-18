@@ -11,6 +11,12 @@ h1 {
   margin-top: 20px;
 }
 
+.main-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #007bff;
+}
+
 form {
   width: 80%;
   max-width: 600px;
@@ -32,7 +38,8 @@ label {
 input[type="email"],
 input[type="password"],
 input[type="number"],
-input[type="file"] {
+input[type="file"],
+input[type="text"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin-top: 5px;
@@ -40,7 +47,20 @@ input[type="file"] {
   border-radius: 4px;
 }
 
-.small-scrolls {
+textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+label > .required-field {
+  color: red;
+}
+
+.small {
   display: block;
   margin-top: 5px;
   color: #999;
@@ -164,6 +184,20 @@ tr:hover {
   align-items: center;
   cursor: pointer !important;
   pointer-events: all !important;
+}
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #007bff;
 }
 
 .modal {

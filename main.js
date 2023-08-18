@@ -33,18 +33,34 @@ let emails = [];
 function readBlackListData() {
   const jsonPath = path.join(__dirname, "blacklist.json");
   try {
-    const jsonData = fs.readFileSync(jsonPath, "utf-8");
-    blackListData = JSON.parse(jsonData);
+    if (fs.existsSync(jsonPath)) {
+      const data = fs.readFileSync(jsonPath, "utf-8");
+      if (data) {
+        blackListData = JSON.parse(data);
+      } else {
+        fs.writeFileSync(jsonPath, "[]");
+      }
+    } else {
+      fs.writeFileSync(jsonPath, "[]");
+    }
   } catch (error) {
-    console.error("An error occurred while reading blacklist data:", error);
+    console.error("An error occurred while reading the blacklist file:", error);
   }
 }
 
 function getEnvFileContent() {
-  const envPath = path.join(__dirname, ".env");
+  const envFilePath = path.join(__dirname, ".env");
   try {
-    const envData = fs.readFileSync(envPath, "utf-8");
-    return envData;
+    if (fs.existsSync(envFilePath)) {
+      const envFileData = fs.readFileSync(envFilePath, "utf-8");
+      if (envFileData) {
+        return envFileData;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   } catch (error) {
     console.error("An error occurred while reading the env file:", error);
   }
@@ -56,6 +72,16 @@ app.whenReady().then(() => {
 
   ipcMain.handle("getEnvFileContent", (event) => {
     return getEnvFileContent();
+  });
+
+  ipcMain.handle("getEmailFileContent", (event) => {
+    const emailContentPath = path.join(__dirname, "emailContent.json");
+    if (fs.existsSync(emailContentPath)) {
+      const emailContentData = fs.readFileSync(emailContentPath, "utf-8");
+      return emailContentData;
+    } else {
+      return [];
+    }
   });
 
   ipcMain.handle("getBlacklistData", (event) => {
@@ -80,6 +106,22 @@ app.whenReady().then(() => {
       return true;
     } catch (error) {
       console.error("An error occurred while writing to the env file:", error);
+      return false;
+    }
+  });
+
+  ipcMain.handle("writeToEmailContentFile", async (event, content) => {
+    try {
+      await fs.promises.writeFile(
+        "./emailContent.json",
+        JSON.stringify(content)
+      );
+      return true;
+    } catch (error) {
+      console.error(
+        "An error occurred while writing to the email content file:",
+        error
+      );
       return false;
     }
   });
