@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/renderer.js" defer></script>
+    <title>LinkedIn Email Sender</title>
+  </head>
+  <body>
+    <h1 class="main-title">LinkedIn Email Sender</h1>
+    <form id="email-form">
+      <div class="section-title">Setup</div>
+      <label for="linkedin-email"
+        >LinkedIn Email: <span class="required-field">*</span></label
+      >
+      <input
+        type="email"
+        id="linkedin-email"
+        name="linkedin-email"
+        placeholder="Enter LinkedIn email"
+        required
+      /><br />
+
+      <label for="linkedin-password"
+        >LinkedIn Password: <span class="required-field">*</span></label
+      >
+      <input
+        type="password"
+        id="linkedin-password"
+        name="linkedin-password"
+        placeholder="Enter LinkedIn password"
+        required
+      /><br />
+
+      <label for="" <label for="gmail-email"
+        >Gmail Email: <span class="required-field">*</span></label
+      >
+      <input
+        type="email"
+        id="gmail-email"
+        name="gmail-email"
+        placeholder="Enter Gmail email"
+        required
+      /><br />
+
+      <label for="gmail-password"
+        >Gmail Password: <span class="required-field">*</span></label
+      >
+      <input
+        type="password"
+        id="gmail-password"
+        name="gmail-password"
+        placeholder="Enter Gmail password"
+        required
+      /><br />
+
+      <label for="scroll-count"
+        >Number of Scrolls: <span class="required-field">*</span></label
+      >
+      <small class="small"
+        >Note: More scrolls will take more time but will find more
+        emails.</small
+      >
+      <input
+        type="number"
+        id="scroll-count"
+        name="scroll-count"
+        min="1"
+        placeholder="Enter number of scrolls"
+        required
+      /><br />
+
+      <div class="separator"></div>
+
+      <div class="section-title">Email To Send</div>
+
+      <label for="email-subject"
+        >Subject: <span class="required-field">*</span></label
+      >
+      <input
+        type="text"
+        id="email-subject"
+        name="email-subject"
+        placeholder="Enter email subject"
+        required
+      /><br />
+
+      <label for="email-body"
+        >Body: <span class="required-field">*</span></label
+      >
+
+      <small class="small">Note: HTML is acceptable</small>
+      <textarea
+        id="email-body"
+        name="email-body"
+        placeholder="Enter email body"
+        rows="10"
+        cols="50"
+        required
+      ></textarea
+      ><br />
+
+      <label for="cv-upload">Upload CV:</label>
+      <small class="small"
+        >Note: Cannot be saved due to security breaches</small
+      >
+
+      <input
+        type="file"
+        id="cv-upload"
+        name="cv-upload"
+        accept=".pdf,.doc,.docx"
+      /><br />
+
+      <div class="options">
+        <div class="buttons">
+          <button id="submit-button" type="submit">Search For Emails</button>
+          <button id="stop-button" type="stop-submit">Stop</button>
+        </div>
+        <label for="save-credentials" class="options">
+          <input
+            type="checkbox"
+            id="save-credentials"
+            name="save-credentials"
+            checked
+          />
+          Save Credentials
+        </label>
+      </div>
+    </form>
+
+    <table id="success-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Date Sent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr></tr>
+      </tbody>
+    </table>
+    <div class="pagination-info" id="pagination-info">1234</div>
+
+    <div class="pagination">
+      <button id="prev-page" class="pagination-button">Previous Page</button>
+      <div id="page-buttons" class="pagination-button-group"></div>
+      <button id="next-page" class="pagination-button">Next Page</button>
+    </div>
+
+    <div id="confirmation-modal" class="modal">
+      <div class="modal-content">
+        <h2>Confirmation</h2>
+        <p>Stopping the process will delete all the emails found.</p>
+        <p>Are you sure you want to stop the process?</p>
+        <div class="modal-buttons">
+          <button id="confirm-stop">Yes</button>
+          <button id="cancel-stop">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -2,19 +2,25 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-async function sendEmails(emails) {
+async function sendEmails(
+  emails,
+  gmailEmail,
+  gmailPassword,
+  cvName,
+  cvPath,
+  subject,
+  body
+) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.GMAIL_EMAIL,
-      pass: process.env.GMAIL_PASSWORD,
+      user: gmailEmail,
+      pass: gmailPassword,
     },
   });
 
-  const linkedinPost = process.env.LINKEDIN_POST;
-
-  // Load the blacklist from the JSON file
   let blacklist = [];
+  let successEmails = [];
   try {
     const blacklistData = fs.readFileSync("blacklist.json", "utf8");
     blacklist = JSON.parse(blacklistData);
@@ -28,32 +34,14 @@ async function sendEmails(emails) {
     const blacklistEntry = blacklist.find((entry) => entry.email === email);
     if (!blacklistEntry || hasBeenAMonth(blacklistEntry.date, now)) {
       const mailOptions = {
-        from: process.env.GMAIL_EMAIL,
+        from: gmailEmail,
         to: email,
-        subject: "קורות חיים - ירדן יוסף",
-        html: `
-      <p>
-        שלום.<br>
-        שמי ירדן יוסף ואני מחפש את האתגר הבא שלי בתחום הWeb כאשר הדגש הוא על פיתוח Full Stack/Front End.<br>
-        ראיתי שפרסמת בלינקדאין את המייל שלך וחשבתי שאולי יעניין אותך לקבל את קורות החיים שלי.<br>
-        בנוסף, אני מצרף פוסט בו פרסמתי פרטים נוספים על עצמי ועל מה שאני מחפש.<br>
-        <a href="${linkedinPost}">קישור לפוסט</a><br><br>
-        אשמח לשמוע ממך בקרוב, תודה.
-      </p>
-      <br>
-      <p>
-        Hello,<br>
-        My name is Yarden Yosef, and I'm seeking my next challenge in the field of Web development, with a focus on Full Stack/Front End development.<br>
-        I noticed that you've posted your email on LinkedIn, and I thought you might be interested in receiving my resume.<br>
-        Additionally, I'm attaching a post where I've shared more details about myself and what I'm looking for.<br>
-        <a href="${linkedinPost}">Link to the post</a><br><br>
-        I'd love to hear from you soon. Thank you.
-      </p>
-    `,
+        subject: subject,
+        html: body,
         attachments: [
           {
-            filename: "CV Yarden Yosef.pdf",
-            path: "./attachments/CV Yarden Yosef.pdf",
+            filename: cvName,
+            path: cvPath,
           },
         ],
       };
@@ -68,17 +56,54 @@ async function sendEmails(emails) {
           blacklist.push({ email, date: now.toISOString() });
         }
         fs.writeFileSync("blacklist.json", JSON.stringify(blacklist), "utf8");
+
+        successEmails.push(email);
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error);
       }
-    } else {
-      console.log(`Skipping ${email} because it's in the blacklist`);
     }
   }
+
+  if (successEmails.length > 0) {
+    const mailOptions = {
+      from: gmailEmail,
+      to: gmailEmail,
+      subject: "LinkedIn Email Sender - Success",
+      html: `<p>Successfully sent ${successEmails.length} emails.
+      <br>
+      The following emails were sent:
+      <br>
+      ${successEmails.join("<br>")}
+      <br>
+      The subject was:
+      <br>
+      ${subject}
+      <br>
+      The body was:
+      <br>
+      ${body}
+      </p>`,
+      attachments: [
+        {
+          filename: cvName,
+          path: cvPath,
+        },
+      ],
+    };
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`Success email sent to ${gmailEmail}:`, info.response);
+    } catch (error) {
+      console.error(`Error sending success email to ${gmailEmail}:`, error);
+    }
+  }
+
+  return successEmails;
 }
 
 function hasBeenAMonth(startDate, endDate) {
-  const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // 30 days per month
+  const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000;
   const timeDiff = endDate - new Date(startDate);
   return timeDiff >= oneMonthInMillis;
 }

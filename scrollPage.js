@@ -1,5 +1,5 @@
 async function scrollPage(page, times) {
-  for (let i = 0; i < times; i++) {
+  for (let i = 0; i < parseInt(times); i++) {
     await page.evaluate(() => {
       window.scrollBy(0, window.innerHeight);
     });
