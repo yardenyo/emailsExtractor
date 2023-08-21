@@ -9,6 +9,7 @@ This repository contains a Node.js script that uses Puppeteer to scrape emails f
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Scheduling](#scheduling)
+- [Electron Desktop App](#electron-desktop-app)
 - [License](#license)
 
 ## Features
@@ -61,6 +62,10 @@ You can also configure the script by editing the sendEmails.js file in the root 
 ## Scheduling
 
 You can schedule the script to run at regular intervals using cron or any other scheduling tool.
+
+## Electron Desktop App
+
+If you prefer a desktop application, we offer an Electron-based desktop app for LinkedIn Email Sender. You can download the app for your operating system from [our releases page](https://github.com/yardenyo/emailsExtractor/releases). The desktop app simplifies the email scraping process and eliminates the need for manual configuration.
 
 ## License
 
