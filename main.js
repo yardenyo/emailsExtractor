@@ -92,9 +92,11 @@ app.whenReady().then(() => {
     try {
       const emailsToSend = await runLinkedInEmailSender(formData);
 
-      mainWindow.webContents.send("emailsToSend", emailsToSend);
+      await mainWindow.webContents.send("emailsToSend", emailsToSend);
 
-      stopExecution();
+      await mainWindow.webContents.send("stopProcess");
+
+      // stopExecution();
     } catch (error) {
       console.error("Error during email sending:", error);
     }

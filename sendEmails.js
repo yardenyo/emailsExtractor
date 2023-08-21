@@ -34,7 +34,7 @@ async function sendEmails(
     const blacklistEntry = blacklist.find((entry) => entry.email === email);
     if (!blacklistEntry || hasBeenAMonth(blacklistEntry.date, now)) {
       const mailOptions = {
-        from: process.env.GMAIL_EMAIL,
+        from: gmailEmail,
         to: email,
         subject: subject,
         html: body,
@@ -61,6 +61,41 @@ async function sendEmails(
       } catch (error) {
         console.error(`Error sending email to ${email}:`, error);
       }
+    }
+  }
+
+  if (successEmails.length > 0) {
+    const mailOptions = {
+      from: gmailEmail,
+      to: gmailEmail,
+      subject: "LinkedIn Email Sender - Success",
+      html: `<p>Successfully sent ${successEmails.length} emails.
+      <br>
+      The following emails were sent:
+      <br>
+      ${successEmails.join("<br>")}
+      <br>
+      The subject was:
+      <br>
+      ${subject}
+      <br>
+      The body was:
+      <br>
+      ${body}
+      </p>`,
+      attachments: [
+        {
+          filename: cvName,
+          path: cvPath,
+        },
+      ],
+    };
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`Success email sent to ${gmailEmail}:`, info.response);
+    } catch (error) {
+      console.error(`Error sending success email to ${gmailEmail}:`, error);
     }
   }
 

@@ -141,15 +141,24 @@ document.addEventListener("DOMContentLoaded", () => {
   populateTable(currentPage);
 
   // Event listener for emails to send
-  window.electron.ipcRenderer.on("emailsToSend", (event, emailsToSend) => {
-    emailsToSend.forEach((email) => {
-      const newRow = successTable.insertRow();
-      const emailCell = newRow.insertCell(0);
-      const dateCell = newRow.insertCell(1);
+  window.electron.ipcRenderer.on(
+    "emailsToSend",
+    async (event, emailsToSend) => {
+      emailsToSend.forEach((email) => {
+        const newRow = successTable.insertRow();
+        const emailCell = newRow.insertCell(0);
+        const dateCell = newRow.insertCell(1);
 
-      emailCell.textContent = email;
-      dateCell.textContent = new Date().toLocaleString();
-    });
+        emailCell.textContent = email;
+        dateCell.textContent = new Date().toLocaleString();
+      });
+    }
+  );
+
+  window.electron.ipcRenderer.on("stopProcess", async () => {
+    processIsRunning = false;
+    submitButton.disabled = false;
+    stopButton.disabled = true;
   });
 
   // Event listener for form submission
