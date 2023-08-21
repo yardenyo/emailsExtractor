@@ -95,8 +95,6 @@ app.whenReady().then(() => {
       await mainWindow.webContents.send("emailsToSend", emailsToSend);
 
       await mainWindow.webContents.send("stopProcess");
-
-      // stopExecution();
     } catch (error) {
       console.error("Error during email sending:", error);
     }
@@ -133,6 +131,10 @@ app.whenReady().then(() => {
     const cvPath = cvData.path;
     const attachmentsFolderPath = path.join(__dirname, "attachments");
     const destinationPath = path.join(attachmentsFolderPath, cvName);
+
+    if (!fs.existsSync(attachmentsFolderPath)) {
+      fs.mkdirSync(attachmentsFolderPath);
+    }
 
     try {
       await fs.promises.copyFile(cvPath, destinationPath);
