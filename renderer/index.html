@@ -25,6 +25,7 @@
         >LinkedIn Email: <span class="required-field">*</span></label
       >
       <input
+        class="default-field"
         type="email"
         id="linkedin-email"
         name="linkedin-email"
@@ -36,6 +37,7 @@
         >LinkedIn Password: <span class="required-field">*</span></label
       >
       <input
+        class="default-field"
         type="password"
         id="linkedin-password"
         name="linkedin-password"
@@ -47,6 +49,7 @@
         >Gmail Email: <span class="required-field">*</span></label
       >
       <input
+        class="default-field"
         type="email"
         id="gmail-email"
         name="gmail-email"
@@ -58,6 +61,7 @@
         >Gmail Password: <span class="required-field">*</span></label
       >
       <input
+        class="default-field"
         type="password"
         id="gmail-password"
         name="gmail-password"
@@ -73,6 +77,7 @@
         emails.</small
       >
       <input
+        class="default-field"
         type="number"
         id="scroll-count"
         name="scroll-count"
@@ -82,6 +87,34 @@
         required
       /><br />
 
+      <label for="unique-field">Delay:</label>
+      <small class="small"
+        >Note: Allow to automate the process so it will repeat itself.</small
+      >
+
+      <div class="unique-fields-wrapper">
+        <div class="unique-field">
+          <label for="automation-time">Delay Time:</label>
+          <input
+            class="unique-number-field"
+            type="number"
+            id="automation-time"
+            name="automation-time"
+            min="0"
+            value="0"
+            required
+          />
+        </div>
+
+        <div class="unique-field">
+          <label for="automation-unit">Time Unit:</label>
+          <select id="automation-unit" name="automation-unit">
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+          </select>
+        </div>
+      </div>
+
       <div class="separator"></div>
 
       <div class="section-title">Email To Send</div>
@@ -90,6 +123,7 @@
         >Subject: <span class="required-field">*</span></label
       >
       <input
+        class="default-field"
         type="text"
         id="email-subject"
         name="email-subject"
@@ -118,6 +152,7 @@
       >
 
       <input
+        class="default-field"
         type="file"
         id="cv-upload"
         name="cv-upload"

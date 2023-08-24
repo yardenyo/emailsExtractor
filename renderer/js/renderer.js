@@ -10,8 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const cancelStopButton = document.getElementById("cancel-stop");
   const prevPageButton = document.getElementById("prev-page");
   const nextPageButton = document.getElementById("next-page");
+  const delayInput = document.getElementById("automation-time");
+  const delayUnitSelect = document.getElementById("automation-unit");
 
   let processIsRunning = false;
+  let intervalId = null;
   let currentPage = 1;
   const itemsPerPage = 10;
 
@@ -133,6 +136,34 @@ document.addEventListener("DOMContentLoaded", () => {
     )} of ${totalResults} results`;
   }
 
+  function calculateDelay(time, unit) {
+    if (unit === "minutes") {
+      return time * 60 * 1000;
+    } else if (unit === "hours") {
+      return time * 60 * 60 * 1000;
+    }
+
+    return 0;
+  }
+
+  async function startProcess(payload, delayInMs = 0) {
+    try {
+      processIsRunning = true;
+      submitButton.disabled = true;
+      stopButton.disabled = false;
+
+      intervalId = setInterval(async () => {
+        try {
+          await window.electron.ipcRenderer.invoke("start", payload);
+        } catch (error) {
+          throw error;
+        }
+      }, delayInMs);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Initial setup
   submitButton.disabled = false;
   stopButton.disabled = true;
@@ -233,13 +264,16 @@ document.addEventListener("DOMContentLoaded", () => {
       body,
     };
 
-    try {
-      processIsRunning = true;
-      submitButton.disabled = true;
-      stopButton.disabled = false;
-      await window.electron.ipcRenderer.invoke("start", payload);
-    } catch (error) {
-      throw error;
+    const delay = parseInt(delayInput.value);
+    const unit = delayUnitSelect.value;
+    const delayInMs = calculateDelay(delay, unit);
+
+    console.log("Delay in ms:", delayInMs);
+
+    if (delayInMs > 0) {
+      startProcess(payload, delayInMs);
+    } else {
+      startProcess(payload);
     }
   });
 

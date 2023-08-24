@@ -35,16 +35,46 @@ label {
   font-weight: 500;
 }
 
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="file"],
-input[type="text"] {
+.default-field {
   width: calc(100% - 20px);
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.unique-fields-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  & > .unique-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+
+    & > input {
+      width: calc(40% - 20px);
+      padding: 5px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    & > select {
+      width: calc(50% - 20px);
+      padding: 5px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
 }
 
 textarea {
